@@ -48,12 +48,9 @@ module process #(
         next_state = state;
         case (state)
             ST_IDLE: begin
-                // 等第一個輸入握手再進入 LOAD
                 if (s_hand) next_state = ST_LOAD;
             end
             ST_LOAD: begin
-                // 每拍固定 4 個元素，裝滿 16 個就進 STREAM
-                // 若本拍裝滿（mat_idx==12 且 s_hand），下拍轉 STREAM
                 if ((mat_idx == 4'd8) && s_hand)
                     next_state = ST_STREAM;
                 else
@@ -61,7 +58,7 @@ module process #(
             end
             ST_STREAM: begin
                 if (m_tlast)
-                    next_state = ST_IDLE; // 簡單起見，永遠停在 STREAM
+                    next_state = ST_IDLE;
             end
             default: next_state = ST_IDLE;
         endcase
